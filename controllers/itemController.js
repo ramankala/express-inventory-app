@@ -25,6 +25,21 @@ exports.item_create_post = (req, res) => {
 };
 
 // Display item delete form on GET.
-exports.book_delete_get = (req, res) => {
-    res.send("NOT IMPLEMENTED: Book delete GET");
+exports.item_delete_get = (req, res) => {
+    res.send("NOT IMPLEMENTED: Item delete GET");
+};
+
+// Handle item delete on POST.
+exports.item_delete_post = (req, res) => {
+    res.send("NOT IMPLEMENTED: Item delete POST");
+};
+
+// Display item update form on GET.
+exports.item_update_get = (req, res) => {
+    res.send("NOT IMPLEMENTED: Item update GET");
+};
+
+// Handle item update on POST.
+exports.item_update_post = (req, res) => {
+    res.send("NOT IMPLEMENTED: Item update POST");
 };
