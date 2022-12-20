@@ -26,7 +26,16 @@ exports.index = (req, res) => {
 
 // Display list of all items.
 exports.item_list = (req, res) => {
-    res.send("NOT IMPLEMENTED: Item list");
+    Item.find({}, "name numInStock price")
+        .sort({ name: 1 })
+        .populate("name")
+        .exec(function (err, list_items) {
+            if (err) {
+                return next(err);
+            }
+            //Successful, so render
+            res.render("grocery_list", { title: "Grocery List", items_list: list_items });
+        });
 };
 
 // Display detail page for a specific item.
