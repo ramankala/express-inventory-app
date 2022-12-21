@@ -28,7 +28,7 @@ exports.index = (req, res) => {
 exports.item_list = (req, res) => {
     Item.find({}, "name numInStock price")
         .sort({ name: 1 })
-        .populate("name")
+        .populate("category")
         .exec(function (err, list_items) {
             if (err) {
                 return next(err);
@@ -40,7 +40,18 @@ exports.item_list = (req, res) => {
 
 // Display detail page for a specific item.
 exports.item_detail = (req, res) => {
-    res.send(`NOT IMPLEMENTED: item detail: ${req.params.id}`);
+    Item.findById(req.params.id)
+        .populate("category")
+        .exec(function (err, results) {
+            if (err) {
+                return next(err);
+            }
+            //Successful, so render
+            res.render("food_detail", {
+                title: results.name,
+                food: results,
+            });
+        });
 };
 
 // Display item create form on GET.

@@ -8,11 +8,17 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js", integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV", crossorigin="anonymous"></script>
   </head>
   <body>
-    <h1><%= title %></h1>
-    <ul>
-        <% category_list.forEach(function(item, index){ %>
-            <li><a href="<%= item.url %>"><%= item.name %></a></li>
-        <% }) %>
-    </ul>
+    <h1>Category: <%= category.name %></h1>
+<div style="margin-left:20px;margin-top:20px">
+    <h4>Categories</h4>
+    <dl>
+      <% category_items.forEach(function(item, index) { %>
+        <dt>
+            <dd><a href="<%= item.url %>"> <%= item.name %></a></dd>
+            <dd> <%=item.description %></dd>
+        </dt>
+    <% }) %>
+    </dl>
+</div>
   </body>
 </html>

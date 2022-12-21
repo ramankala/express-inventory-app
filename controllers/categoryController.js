@@ -1,4 +1,7 @@
 const Category = require("../models/categories");
+const Item = require("../models/items");
+
+const async = require("async");
 
 // Display list of all Categories.
 exports.category_list = (req, res) => {
@@ -18,7 +21,34 @@ exports.category_list = (req, res) => {
 
 // Display detail page for a specific Category.
 exports.category_detail = (req, res) => {
-    res.send(`NOT IMPLEMENTED: Category list: ${req.params.id}`);
+    async.parallel(
+        {
+            category(callback) {
+                Category.findById(req.params.id).exec(callback);
+            },
+
+            category_items(callback) {
+                Item.find({ category: req.params.id }).exec(callback);
+            },
+        },
+        (err, results) => {
+            if (err) {
+                return next(err);
+            }
+            if (results.category == null) {
+                // No results.
+                const err = new Error("genre not found");
+                err.status = 404;
+                return next(err);
+            }
+            // Successful, so render
+            res.render("category_detail", {
+                title: "Category Detail",
+                category: results.category,
+                category_items: results.category_items,
+            });
+        }
+    );
 };
 
 // Display Category create form on GET.
