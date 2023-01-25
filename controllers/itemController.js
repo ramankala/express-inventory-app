@@ -2,7 +2,7 @@ const Item = require("../models/items");
 const Category = require("../models/categories");
 
 const async = require("async");
-
+const { body, validationResult } = require("express-validator");
 
 exports.index = (req, res) => {
     async.parallel(
@@ -34,7 +34,7 @@ exports.item_list = (req, res) => {
                 return next(err);
             }
             //Successful, so render
-            res.render("grocery_list", { title: "Grocery List", items_list: list_items });
+            res.render("item_list", { title: "Grocery List", items_list: list_items });
         });
 };
 
@@ -56,7 +56,22 @@ exports.item_detail = (req, res) => {
 
 // Display item create form on GET.
 exports.item_create_get = (req, res) => {
-    res.send("NOT IMPLEMENTED: Item create GET");
+    async.parallel(
+        {
+            categories(callback) {
+                Category.find(callback);
+            }
+        },
+        (err, results) => {
+            if (err) {
+                return next(err);
+            }
+            res.render("item_form", {
+                title: "Create Food Item",
+                categories: results.categories
+            });
+        }
+    );
 };
 
 // Handle item create on POST.
