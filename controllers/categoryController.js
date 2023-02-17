@@ -116,14 +116,14 @@ exports.category_create_post = [
   
 
 // Display Category delete form on GET.
-exports.category_delete_get = (req, res) => {
+exports.category_delete_get = (req, res, next) => {
     async.parallel(
         {
             category(callback) {
                 Category.findById(req.params.id).exec(callback);
             },
             items(callback) {
-                Item.findById({ category: req.params.id }).exec(callback);
+                Item.find({ category: req.params.id }).exec(callback);
             },
         },
         (err, results) => {
@@ -143,14 +143,14 @@ exports.category_delete_get = (req, res) => {
 };
 
 // Handle Category delete on POST.
-exports.category_delete_post = (req, res) => {
+exports.category_delete_post = (req, res, next) => {
     async.parallel(
         {
             category(callback) {
                 Category.findById(req.body.categoryid).exec(callback);
             },
             items(callback) {
-                Item.findById({ category: req.body.categoryid }).exec(callback);
+                Item.find({ category: req.body.categoryid }).exec(callback);
             },
         },
         (err, results) => {

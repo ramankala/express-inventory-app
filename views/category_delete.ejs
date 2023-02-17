@@ -1,12 +1,32 @@
 <% if (items.length > 0) { %>
     <p><strong>Delete the following foods before attempting to delete this category.</strong></p>
-    <div>
+    <div style="margin-left:20px;margin-top:20px;">
         <h4>Foods</h4>
-        <% for(const food of items) { %>
-            <li>
-                <a href="<%=food.url%>"><%=food.name%></a>
-                <p><%=food.description%></p>
-            </li>
+        <dl>
+            <% for(const food of items) { %>
+                <dt>
+                    <dd>
+                        <a href="<%=food.url%>"><%=food.name%></a>
+                        <p><%=food.description%></p>
+                    </dd>
+                </dt>
+            <% } %>
+        </dl>
+
         <% } else { %>
+        <p> Do you really want to delete this Category?</p>
+
+        <form method="POST" action="">
+            <div>
+                <input
+                    id="categoryid"
+                    type="hidden"
+                    name="categoryid"
+                    required="true"
+                    value="<%= category._id%>" 
+                />
+            </div>
+            <button type="submit">Submit</button>
+        </form>
     </div>
 <% } %>
