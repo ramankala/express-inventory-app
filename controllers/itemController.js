@@ -156,13 +156,34 @@ exports.item_create_post = [
 ];
 
 // Display item delete form on GET.
-exports.item_delete_get = (req, res) => {
-
+exports.item_delete_get = (req, res, next) => {
+    Item.findById(req.params.id)
+        .populate("category")
+        .exec(function (err, items) {
+            if (err) {
+                return next(err);
+            }
+            if (items == null) {
+                // No results
+                res.redirect("/catalog/items");
+            }
+            // Successful, so render.
+            res.render("item_delete", {
+                title: "Delete Item",
+                item: items,
+            });
+        });
 };
 
 // Handle item delete on POST.
-exports.item_delete_post = (req, res) => {
-    res.send("NOT IMPLEMENTED: Item delete POST");
+exports.item_delete_post = (req, res, next) => {
+    Item.findByIdAndRemove(req.body.foodid, function deleteItem(err) {
+        if (err) {
+            return next(err);
+        }
+        // Success, so redirect to list of items.
+        res.redirect("/catalog/items");
+    });
 };
 
 // Display item update form on GET.

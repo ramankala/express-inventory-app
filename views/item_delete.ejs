@@ -1,0 +1,15 @@
+<h1><%= title %></h1>
+<p>Do you really want to delete this Food?</p>
+
+<form method="POST" action="">
+    <div>
+        <input 
+            id="foodid"
+            type="hidden"
+            name="foodid"
+            required="true"
+            value="<%=item._id%>"
+        />
+    </div>
+    <button type="submit">Submit</button>
+</form>
