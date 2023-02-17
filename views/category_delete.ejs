@@ -1,0 +1,12 @@
+<% if (items.length > 0) { %>
+    <p><strong>Delete the following foods before attempting to delete this category.</strong></p>
+    <div>
+        <h4>Foods</h4>
+        <% for(const food of items) { %>
+            <li>
+                <a href="<%=food.url%>"><%=food.name%></a>
+                <p><%=food.description%></p>
+            </li>
+        <% } else { %>
+    </div>
+<% } %>

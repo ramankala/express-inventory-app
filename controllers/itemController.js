@@ -157,7 +157,7 @@ exports.item_create_post = [
 
 // Display item delete form on GET.
 exports.item_delete_get = (req, res) => {
-    res.send("NOT IMPLEMENTED: Item delete GET");
+
 };
 
 // Handle item delete on POST.

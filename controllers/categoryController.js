@@ -117,12 +117,66 @@ exports.category_create_post = [
 
 // Display Category delete form on GET.
 exports.category_delete_get = (req, res) => {
-    res.send("NOT IMPLEMENTED: Category delete GET");
+    async.parallel(
+        {
+            category(callback) {
+                Category.findById(req.params.id).exec(callback);
+            },
+            items(callback) {
+                Item.findById({ category: req.params.id }).exec(callback);
+            },
+        },
+        (err, results) => {
+            if (err) {
+                return next(err);
+            }
+            if (results.category == null) {
+                res.redicrect("/catalog/categories");
+            }
+            res.render("category_delete", {
+                title: "Delete Category",
+                category: results.category,
+                items: results.items,
+            });
+        }
+    );
 };
 
 // Handle Category delete on POST.
 exports.category_delete_post = (req, res) => {
-    res.send("NOT IMPLEMENTED: Category delete POST");
+    async.parallel(
+        {
+            category(callback) {
+                Category.findById(req.body.categoryid).exec(callback);
+            },
+            items(callback) {
+                Item.findById({ category: req.body.categoryid }).exec(callback);
+            },
+        },
+        (err, results) => {
+            if (err) {
+                return next(err);
+            }
+            // Success
+            if (results.items.length > 0) {
+                // Category has items. Render in the same way as GET route.
+                res.render("category_delete", {
+                    title: "Delete Category",
+                    category: results.category,
+                    items: results.items,
+                });
+                return;
+            }
+            // Category has no items.  Delete object and redirect to the list of categories.
+            Category.findByIdAndRemove(req.body.categoryid, (err) => {
+                if (err) {
+                    return next(err);
+                }
+                // Success - go to categories list
+                res.redirect("/catalog/categories");
+            });
+        }
+    );
 };
 
 // Display Category update form on GET.
