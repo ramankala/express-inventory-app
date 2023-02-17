@@ -1,0 +1,72 @@
+<div>
+    <form action = "" method = "post" >
+        <div>
+            <div>
+                <label for="name" name="itemName">Food Item:</label>
+                <input
+                    placeholder="Name of food item"
+                    id="name"
+                    name="name"
+                    type="text"
+                    required="true"
+                    value="<% if (typeof item == "undefined") { %><% } else { %><%= item.name %><% } %>"
+                />
+            </div>
+            <div>
+                <label for="description" name="itemDescription">Food Description:</label>
+                <input
+                    placeholder="Description of food item"
+                    id="desription"
+                    name="description"
+                    type="text"
+                    required="true"
+                    value="<% if (typeof item == "undefined") { %><% } else { %><%= item.description %><% } %>"
+                />
+            </div>
+            <div>
+                <label for="price" name="itemPrice">Food Item Price:</label>
+                <input
+                    placeholder="Price of food item"
+                    id="price"
+                    name="price"
+                    type="text"
+                    required="true"
+                    value="<% if (typeof item == "undefined") { %><% } else { %><%= item.price %><% } %>"
+                />
+            </div>
+            <div>
+                <label for="numInStock" name="numInStock"># of Items in Stock:</label>
+                <input
+                    placeholder="# of items in stock"
+                    id="numInStock"
+                    name="numInStock"
+                    type="text"
+                    required="true"
+                    value="<% if (typeof item == "undefined") { %><% } else { %><%= item.numInStock %><% } %>"
+                />
+            </div>
+            <div>
+                <% for (const category of categories) {%>
+                    <div>
+                        <input
+                            id="<%= category._id %>"
+                            name="categories"
+                            type="checkbox"
+                            value="<%= category._id %>"
+                            <% if (category.checked) { %>
+                                checked="<%=category.checked%>"
+                            <% } %>
+                        />
+                        <span><%=category.name %></span>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+    <% if (typeof errors != "undefined") { %>
+        <% for(const error of errors) {%>
+             <div><%=error.msg %></div>
+             <% } %>
+    <% } %>
+</div>

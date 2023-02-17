@@ -75,9 +75,85 @@ exports.item_create_get = (req, res) => {
 };
 
 // Handle item create on POST.
-exports.item_create_post = (req, res) => {
-    res.send("NOT IMPLEMENTED: Item create POST");
-};
+exports.item_create_post = [
+    // Convert categories to an array
+    (req, res, next) => {
+        if (!Array.isArray(req.body.categories)) {
+            req.body.categories = typeof req.body.categories === "undefined" ? [] : [req.body.categories];
+        }
+        next();
+    },
+
+    //Validate and sanitize fields.
+    body("name", "Name must not be empty")
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body("description", "Description must not be empty")
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body("price", "Price must not be empty")
+        .trim()
+        .isInt({min: 0, max: 1000000})
+        .escape(),
+    body("numInStock", "# in stock must not be empty")
+        .trim()
+        .isInt({min: 0, max: 999})
+        .escape(),
+    body("categories.*").escape(),
+
+    // Process request after validation and sanization.
+    (req, res, next) => {
+        const errors = validationResult(req);
+
+        const item = new Item({
+            name: req.body.name,
+            description: req.body.description,
+            price: req.body.price,
+            numInStock: req.body.numInStock,
+            category: req.body.categories,
+        });
+        if (!errors.isEmpty()) {
+
+            async.parallel(
+                {
+                    categories(callback) {
+                        Category.find(callback);
+                    }
+                },
+                (err, results) => {
+                    if (err) {
+                        return next (err);
+                    }
+
+                    // Mark our selected categories as checked.
+                    for (const category of results.categories) {
+                        if (item.category.includes(category._id)) {
+                            category.checked = true;
+                        }
+                    }
+
+                    res.render("item_form", {
+                        title: "Create Food Item",
+                        categories: results.categories,
+                        item,
+                        errors: errors.array(),
+                    });
+                }
+            );
+            return;
+        }
+        
+        item.save((err) => {
+            if (err) {
+                return next(err);
+            }
+            //Successful: redirect to new item record.
+            res.redirect(item.url);
+        });
+    },
+];
 
 // Display item delete form on GET.
 exports.item_delete_get = (req, res) => {
