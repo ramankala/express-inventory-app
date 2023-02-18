@@ -17,3 +17,7 @@ Challenges I faced were wiring the components correctly, and being able to troub
 - NodeJS
 - JavaScript
 - HTML/CSS
+
+## Live Demo
+
+https://express-inventory-app-l8rt.onrender.com
