@@ -11,7 +11,7 @@
     <h1>Category: <%= category.name %></h1>
 <div style="margin-left:20px;margin-top:20px">
   <p> <%= category.description %></p>
-    <h4>Categories</h4>
+    <h4>Foods</h4>
     <dl>
       <% category_items.forEach(function(item, index) { %>
         <dt>
@@ -24,6 +24,9 @@
 <hr>
 <p>
   <a href="<%= category.url%>/delete">Delete Category</a>
+</p>
+<p>
+  <a href="<%= category.url%>/update">Update Category</a>
 </p>
   </body>
 </html>

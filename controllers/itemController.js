@@ -187,11 +187,118 @@ exports.item_delete_post = (req, res, next) => {
 };
 
 // Display item update form on GET.
-exports.item_update_get = (req, res) => {
-    res.send("NOT IMPLEMENTED: Item update GET");
+exports.item_update_get = (req, res, next) => {
+    async.parallel(
+        {
+            item(callback) {
+                Item.findById(req.params.id)
+                    .populate("category")
+                    .exec(callback);
+            },
+            category(callback) {
+                Category.find(callback);
+            },
+        },
+        (err, results) => {
+            if (err) {
+                return next(err);
+            }
+            if (results.item == null) {
+                const err = new Error("Item not found");
+                err.status = 404;
+                return next(err);
+            }
+            //Success
+            //Mark our selected categories as checked.
+            for (const category of results.category) {
+                for (const itemCategory of results.item.category) {
+                    if (category._id.toString() === itemCategory._id.toString()) {
+                        category.checked = "true";
+                    }
+                }
+            }
+            res.render("item_form", {
+                title: "Update Food",
+                item: results.item,
+                categories: results.category,
+            });
+        }
+    );
 };
 
 // Handle item update on POST.
-exports.item_update_post = (req, res) => {
-    res.send("NOT IMPLEMENTED: Item update POST");
-};
+exports.item_update_post = [
+    // Convert the category to an array
+    (req, res, next) => {
+        if (!Array.isArray(req.body.category)) {
+            req.body.category = typeof req.body.category === "undefined" ? [] : [req.body.category];
+        }
+        next();
+    },
+
+    body("name", "Name must not be empty.")
+        .trim()
+        .isLength({min:1})
+        .escape(),
+    body("description", "Description must not be empty.")
+        .trim()
+        .isLength({min:1})
+        .escape(),
+    body("price","Price must not be empty.")
+        .trim()
+        .isInt({min: 0, max: 1000000})
+        .escape(),
+    body("numInStock", "Num in stock must not be empty.")
+        .trim()
+        .isInt({min: 1, max: 999})
+        .escape(),
+    body("categories.*").escape(),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+
+        const item = new Item({
+            name: req.body.name,
+            description: req.body.description,
+            price: req.body.price,
+            numInStock: req.body.numInStock,
+            category: typeof req.body.category === "undefined" ? [] : req.body.categories,
+            _id: req.params.id,
+        });
+
+        if (!errors.isEmpty()) {
+            async.parallel(
+                {
+                    category(callback) {
+                        Category.find(callback);
+                    },
+                },
+                (err, results) => {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    for (const categories of results.category) {
+                        if (item.category.includes(categories._id)) {
+                            categories.checked = "true";
+                        }
+                    }
+                    res.render("item_form", {
+                        title: "Update Food",
+                        category: results.category,
+                        item: item,
+                        errors: errors.array(),
+                    });
+                }
+            );
+            return;
+        }
+        Item.findByIdAndUpdate(req.params.id, item, {}, (err, theitem) => {
+            if (err) {
+                return next(err);
+            }
+
+            res.redirect(theitem.url);
+        });
+    },
+];
