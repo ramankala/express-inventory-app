@@ -20,4 +20,4 @@ Challenges I faced were wiring the components correctly, and being able to troub
 
 ## Live Demo
 
-https://express-inventory-app-l8rt.onrender.com
+https://express-inventory-app-eadg.onrender.com
