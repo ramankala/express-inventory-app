@@ -1,6 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+require('dotenv').config();
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
@@ -12,9 +13,11 @@ const helmet = require("helmet");
 
 var app = express();
 
+
+
 // Set up mongoose connection
 const mongoose = require("mongoose");
-const dev_db_url = "mongodb+srv://expressinventory:expressinventory-db@inventory-cluster.emyamaj.mongodb.net/?retryWrites=true&w=majority";
+const dev_db_url = process.env.SECRET_KEY;
 const mongoDB = process.env.MONGODB_URI || dev_db_url;
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
